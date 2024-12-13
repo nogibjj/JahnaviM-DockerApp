@@ -1,31 +1,23 @@
-from flask import (
-    Flask,
-    request,
-    render_template_string,
-)
-from dotenv import load_dotenv
-import random
+import pytest
+from app import app
 
-load_dotenv()
+@pytest.fixture
+def client():
+    app.config['TESTING'] = True
+    with app.test_client() as client:
+        yield client
 
-app = Flask(__name__)
+def test_get_request(client):
+    """Test the GET request to the root endpoint."""
+    response = client.get('/')
+    assert response.status_code == 200
+    assert b"Having a bum day? Let's make it better! Hit this button:" in response.data
 
-HTML_TEMPLATE = """
-<!DOCTYPE html>
-<html>
-<body>
-    <form method="POST" action="/">
-        <label>Having a bum day? Let's make it better! Hit this button:</label>
-        <button>Cheer Me Up!</button>
-    </form>
-</body>
-</html>
-"""
-
-@app.route('/', methods=["GET", "POST"])
-
-def hello_world():
-    cheer_up_phrases = [
+def test_post_request(client):
+    """Test the POST request to the root endpoint."""
+    response = client.post('/')
+    assert response.status_code == 200
+    assert any(phrase.encode() in response.data for phrase in [
         "Data never sleeps, but neither do breakthroughs—you're crushing it!",
         "You’re like a neural net—always learning and adapting!",
         "Remember, even NaN values are part of the dataset!",
@@ -41,11 +33,7 @@ def hello_world():
         "A few more semesters, and you’re the top variable in the model!",
         "Data wrangling = life wrangling. You’re doing both like a pro!",
         "Remember, correlation doesn’t imply exhaustion—rest up and conquer!"
-    ]
-
-    if request.method == "POST":
-        return f"<h1>{random.choice(cheer_up_phrases)}</h1>"
-    return render_template_string(HTML_TEMPLATE)
+    ])
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    pytest.main()

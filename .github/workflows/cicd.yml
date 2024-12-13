@@ -15,6 +15,14 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+    
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    
+    - name: Install
+      run: make install
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
@@ -33,3 +41,12 @@ jobs:
     # Run the Docker container (if applicable)
     - name: Run Docker container
       run: docker run -p 5001:5001 ${{ secrets.DOCKER_USERNAME }}/jahnavi-docker-app:latest  
+    
+    - name: Format
+      run: make format
+
+    - name: Lint
+      run: make lint
+    
+    - name: Test
+      run: make test
