@@ -38,10 +38,6 @@ jobs:
     - name: Push Docker image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/jahnavi-docker-app:latest
     
-    # Run the Docker container (if applicable)
-    - name: Run Docker container
-      run: docker run -p 5001:5001 ${{ secrets.DOCKER_USERNAME }}/jahnavi-docker-app:latest  
-    
     - name: Format
       run: make format
 
