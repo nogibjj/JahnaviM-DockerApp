@@ -1,0 +1,6 @@
+black
+pytest
+pytest-cov
+pylint
+ruff
+Flask==2.0.1
